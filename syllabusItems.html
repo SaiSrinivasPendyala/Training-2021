@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8">
+        <title>Welcome to Tecnics</title>
+<h1 style="text-align:center">Tecnics</h1>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><br><br>
+<button onclick="displayForm(null, null)">Add Syllabus</button>
+<script>
+var syllabusData = [];
+var position = -1;
+var pos;
+// var counter = 0;
+var $form = $("<form></form>");
+
+
+function saveData(){
+  let syllabus = {
+    title: $("#title").val(),
+    description: $("#description").val(),
+  };
+  syllabusData.push(syllabus);
+  console.warn('added', {syllabusData});
+}
+
+function showObjects(){
+  var counter = 0;
+  $("#cardsDiv").empty();
+  console.log("length is- ", syllabusData.length);
+  for (const object of syllabusData){
+    // alert(position);
+    // alert(counter);
+    if (counter == position){
+      displayForm(object, counter);
+      console.log("Hello");
+    }
+    else{
+      displayCard(object, counter);
+    }
+    counter++;
+  }
+}
+
+// function showObjects(){
+//   var counter = 0;
+//   $("#cardsDiv").empty();
+//   for (const o of syllabusData){
+//     alert(position);
+//     alert(counter);
+//     counter++;
+//     if (counter != position){
+//       displayCard(o, counter);
+//     }
+//   }
+// }
+
+function displayCard(obj, pos){
+  let data = `<p>${syllabusData.length}
+  <b>${obj["title"]}</b><br>
+  ${obj["description"]}
+  <button onclick="displayForm(${JSON.stringify(obj).split('"').join("&quot;")}, ${pos})">Edit</button>
+  <button onclick="deleteData()">Delete</button></p>`;
+  $("#cardsDiv").append(data);
+}
+
+// function displayForm(obj, position){
+//   var title = "";
+//   var description = "";
+//   if(obj != null){
+//     // title = obj["title"];
+//     // description = obj["description"];
+//     // $("#title").val(title);
+//     // $("#description").val(description);
+//     let form = `<br>syllabus${syllabusData.length}<br>
+//     <br><textarea rows="2" cols="50">${obj["title"]}</textarea><br><br>
+//     <textarea rows="2" cols="50">${obj["description"]}</textarea>`;
+//     $("#cardsDiv").html(form);
+//     // alert(1);
+//   }
+//   // alert(getSyllabusIndex(obj));
+// }
+
+
+function displayForm(obj, pos){
+  console.log("obj", obj);
+  console.log("pos", pos);
+  $("#cardsDiv").empty();  
+  var title = "";
+  var description = "";
+  if(obj != null){
+    title = obj["title"];
+    description = obj["description"];
+  }
+  console.log(title);
+  console.log(description);
+  let syllabus = `<br>Syllabus${syllabusData.length + 1}
+  <br><br><textarea id="title" name="title" rows="2" cols="50" placeholder="Enter syllabus title">${title}</textarea>
+  <br><br><textarea id="description" name="description" rows="2" cols="50" placeholder="Enter syllabus description">${description}</textarea>
+  <br><br><input type="button" id="save" name="save" onclick="saveData();showObjects();" value="Save">
+  <input type="button" id="cancel" name="cancel" value="Cancel">`;
+  // $("#cardsDiv").html(form);
+  $form.append(syllabus);
+  if(pos == -1 || pos == end){
+    $("#cardsDiv").append($form);
+  }
+  else{
+    $("#cardsDiv").html($form);
+  }
+}
+
+</script>
+<div id="cardsDiv"></div>
+</body>
+</html>
