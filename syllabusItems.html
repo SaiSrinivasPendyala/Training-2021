@@ -16,7 +16,7 @@ var pos;
 var $form = $("<form></form>");
 
 
-function saveData(){
+function saveData() {
   let syllabus = {
     title: $("#title").val(),
     description: $("#description").val(),
@@ -25,18 +25,18 @@ function saveData(){
   console.warn('added', {syllabusData});
 }
 
-function showObjects(){
+function showObjects() {
   var counter = 0;
   $("#cardsDiv").empty();
   console.log("length is- ", syllabusData.length);
-  for (const object of syllabusData){
+  for (const object of syllabusData) {
     // alert(position);
     // alert(counter);
-    if (counter == position){
+    if (counter == position) {
       displayForm(object, counter);
       console.log("Hello");
     }
-    else{
+    else {
       displayCard(object, counter);
     }
     counter++;
@@ -56,7 +56,7 @@ function showObjects(){
 //   }
 // }
 
-function displayCard(obj, pos){
+function displayCard(obj, pos) {
   let data = `<p>${syllabusData.length}
   <b>${obj["title"]}</b><br>
   ${obj["description"]}
@@ -83,7 +83,7 @@ function displayCard(obj, pos){
 // }
 
 
-function displayForm(obj, pos){
+function displayForm(obj, pos) {
   console.log("obj", obj);
   console.log("pos", pos);
   $("#cardsDiv").empty();  
@@ -102,11 +102,8 @@ function displayForm(obj, pos){
   <input type="button" id="cancel" name="cancel" value="Cancel">`;
   // $("#cardsDiv").html(form);
   $form.append(syllabus);
-  if(pos == -1 || pos == end){
-    $("#cardsDiv").append($form);
-  }
-  else{
-    $("#cardsDiv").html($form);
+  $("#cardsDiv").append($form);
+  $("#cardsDiv").html($form);
   }
 }
 
