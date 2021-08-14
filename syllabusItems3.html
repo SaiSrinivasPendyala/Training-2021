@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Welcome to Tecnics</title>
+	<h1 style="text-align:center">Tecnics</h1>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><br><br>
+	<button onclick="addEmptyObject();showAllObjects();">Add Syllabus</button>
+</head>
+<body>
+<script type="text/javascript">
+	// var editMode = true;
+	// var insertMode = true;
+	var gFormPosition = 0;
+	var syllabusItems = [];
+	var $form = $("<form></form>");
+	
+	function addEmptyObject() {
+		var syllabusItem = {"title":"", "description":"", "editMode": false};
+		syllabusItems.push(syllabusItem);
+	}
+    
+	function buildForm(pos) {
+		var $form = $("<form></form>");
+		var syllabus = `<br>Syllabus${syllabusItems.length + 1}
+  		<br><br><textarea id="title${pos}" name="title" rows="2" cols="50" placeholder="Enter syllabus title">${syllabusItems[pos]["title"]}</textarea>
+		<br><br><textarea id="description${pos}" name="description" rows="2" cols="50" placeholder="Enter syllabus description">
+		${syllabusItems[pos]["description"]}</textarea>
+		<br><br><input type="button" id="save" name="save" onclick="saveSyllabusItem(${pos});showAllItems();" value="Save">
+		<input type="button" id="cancel" name="cancel" value="Cancel" onclick="cancelEditing(${pos});showAllObjects();">`;
+		$form.append(syllabus);
+    	return $form;
+	}
+
+	function buildCard(pos) {
+		var card = `<p>${syllabusItems.length}
+  		<b>${syllabusItems[pos]["title"]}</b><br>
+  		${syllabusItems[pos]["description"]}
+  		<button onclick="editSyllabusItem(${pos});showAllObjects();">Edit</button>
+ 		<button onclick="deleteData()">Delete</button></p>`;
+ 		return card;
+	}
+
+	function editSyllabusItem(pos) {
+		syllabusItems[pos]["editMode"] = true;
+	}
+
+	function cancelEditing(pos) {
+		if (isItemEmpty(pos)) {
+			syllabusItems.splice(pos - 1, 1);
+		}
+	}
+
+	function isItemEmpty(pos) {
+		return (syllabusItems[pos]["title"] == "" ? true : false);
+	}
+
+	function saveSyllabusItem(pos) {
+		var title = $("#title`${pos}`").val();
+	    var description = $("#description`${pos}`").val();
+	    var syllabusItem = {};
+	    syllabusItems[pos]["title"] = title;
+		syllabusItems[pos]["description"] = description;
+		syllabusItems.push(syllabusItem);
+	    showAllObjects();
+	}
+	
+	function deleteSyllabusItem(pos) {
+		var confirmMessage = confirm("Are you sure you want to delete the syllabus with\nTitle: " + syllabusItems[pos]["title"] 
+			+ "\nDescription: " + syllabusItems[pos]["description"] + "?");
+		if(confirmMessage) {
+			syllabusItems.splice(pos - 1, 1);
+		}
+	}
+
+	function showAllObjects() {
+		counter = 0;
+		for(const syllabusItem of syllabusItems) {
+			$("#divItems").append(syllabusItems[counter]["editMode"] ? buildForm(counter) : buildCard(counter));
+		}
+	}
+</script>
+<div id="divItems"></div>
+</body>
+</html>
