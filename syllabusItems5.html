@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Welcome to Narayana College</title>
 	<h1 style="text-align: center;" class="header">Sri Chaitanya Junior College</h1>
-	<button onclick="addEmptyObject();showAllItems();" class="button">Add Syllabus</button>
+	<button onclick="addEmptyObject();showAllItems();" class="button" style="text-align: center;">Add Syllabus</button>
 	
 <style type="text/css">
 	.text-center {
@@ -35,32 +35,69 @@
   	<!-- <button onclick="addEmptyObject();showAllItems();" class="button">Add Syllabus</button> -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript">
+	
 	var items = [];
+	
 	function addEmptyObject() {
-		var item = {"title":"", "description":"", "editMode":true};
+		var item = {"title":"", "description":"", "editMode":true, "isTitleValid":true, "isDescValid":true};
 		items.push(item);
 	}
 
+	// function buildForm(itemIndex) {
+	// 	var itemsObject = items[itemIndex];
+	// 	var title = itemsObject.title;
+	// 	var description = itemsObject.description;
+	// 	var $form = $('<form></form');
+	// 	var itemTemplate = `<br><br><p><b>SYLLABUS${itemIndex + 1}</b></p>
+	// 	<br><label>TITLE</label><br>
+	// 	<input type="text" id="title${itemIndex}" name="title${itemIndex}" placeholder="Enter Syllabus Title" value="${title}" size="51"><label id="message1" style="color:red; visibility:hidden;">Enter Valid Title!</label><br>
+	// 	<br><label>DESCRIPTION</label><br>
+	// 	<textarea id="description${itemIndex}" name="description${itemIndex}" placeholder="Enter Syllabus Description" rows="2" cols="61">${description}</textarea><label id="message2" style="color:red; visibility:hidden;">Enter Valid Description!</label><br>
+	// 	<p><input type="button" value="Save" onclick="saveItem(${itemIndex});showAllItems();validateForm(${itemIndex})">
+	// 	   <input type="button" value="Cancel" onclick="cancelEditing(${itemIndex});showAllItems();">
+	// 	</p>`;
+	// 	$form.append(itemTemplate);
+	// 	return $form;
+	// }
 	function buildForm(itemIndex) {
-		// items[index]["editMode"] = false;
-		var title = items[itemIndex]["title"];
-		var description = items[itemIndex]["description"];
-		var $form = $('<form></form');
-		var itemTemplate = `<br><br><p><b>SYLLABUS${itemIndex + 1}</b></p>
-		<br><label>TITLE</label><br>
-		<input type="text" id="title${itemIndex}" name="title${itemIndex}" placeholder="Enter Syllabus Title" value="${title}" size="51"><label id="message1" style="color:red; visibility:hidden;">Enter Valid Title!</label><br>
-		<br><label>DESCRIPTION</label><br>
-		<textarea id="description${itemIndex}" name="description${itemIndex}" placeholder="Enter Syllabus Description" rows="2" cols="61">${description}</textarea><label id="message2" style="color:red; visibility:hidden;">Enter Valid Description!</label><br>
-		<p><input type="button" value="Save" onclick="saveItem(${itemIndex});showAllItems();validateForm(${itemIndex})">
-		   <input type="button" value="Cancel" onclick="cancelEditing(${itemIndex});showAllItems();">
-		</p>`;
+		var itemsObject = items[itemIndex];
+		var title = itemsObject.title;
+		var description = itemsObject.description;
+		itemsObject.isTitleValid = !(itemsObject.title.trim() === "");
+		itemsObject.isDescValid = !(itemsObject.description.trim() === "");
+		var $form = $(`<form id="itemForm${itemIndex}"></form>`);
+		
+		var syllabusNumber = `<br><br><p><b>SYLLABUS-${itemIndex + 1}</b></p>`;
+		
+		var titleTemplate = `<br><label>TITLE</label><br>
+		<input type="text" id="title${itemIndex}" name="title${itemIndex}" placeholder="Enter Syllabus Title" value="${title}" size="51"><br>`;
+		if (itemsObject.isTitleValid == false) {
+			$(`#title${itemIndex}`).after('<p>Please enter a valid title!</p>');
+			// console.log("hello");
+		}
+		
+		var descTemplate = `<br><label>DESCRIPTION</label><br>
+		<textarea id="description${itemIndex}" name="description${itemIndex}" placeholder="Enter Syllabus Description" rows="2" cols="61">${description}</textarea><br>`;
+		if (itemsObject.isDescValid == false) {
+			$(`#description${itemIndex}`).after('<p>Please enter a valid description!</p>');
+			// console.log("hi");
+		}
+		
+		var buttonsTemplate = `<p><input type="button" value="Save" onclick="saveItem(${itemIndex});showAllItems();">
+		<input type="button" value="Cancel" onclick="cancelEditing(${itemIndex});showAllItems();"></p>`;
+
+		// var buttonsTemplate = `<p><input type="submit" value="Save">
+		// <input type="button" value="Cancel" onclick="cancelEditing(${itemIndex});showAllItems();"></p>`;
+		
+		var itemTemplate = `${syllabusNumber}${titleTemplate}${descTemplate}${buttonsTemplate}`;
 		$form.append(itemTemplate);
 		return $form;
 	}
 
 	function buildCard(itemIndex) {
-		var title = items[itemIndex]["title"];
-		var description = items[itemIndex]["description"];
+		var itemsObject = items[itemIndex];
+		var title = itemsObject.title;
+		var description = itemsObject.description;
 		var itemCard = `<form><br><label>${itemIndex + 1}</label>
 		<b>${title}</b><br><p>${description}</p>
 		<p>&emsp;&emsp;<button onclick="editItem(${itemIndex});showAllItems();">Edit</button>
@@ -106,7 +143,6 @@
 		$("#divItems").empty();
 		var itemCounter = 0;
 		for (const item of items) {
-			// alert(syllabusItems[counter]["editMode"]);
 			$("#divItems").append(items[itemCounter]["editMode"] ? buildForm(itemCounter) : buildCard(itemCounter));
 			itemCounter++;
 		}
@@ -123,7 +159,7 @@
 	// 		// alert("Blank Title!");
 	// 		return false;
 	// 	}
-	// 	else if (description.value.trim() == ) {
+	// 	else if (description.value.trim == ) {
 	// 		description.style.border = "solid 2px red";
 	// 		$("#message2").style.visibility = "visible";
 	// 		// alert("Blank Description!");
