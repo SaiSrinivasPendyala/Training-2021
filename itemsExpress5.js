@@ -16,16 +16,15 @@ const bodyParser = require('body-parser');
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+const dotenv = require('dotenv').config();
+dotenv.config();
+
 const connection = mysql.createConnection({
-  host: '165.22.14.77',
-  user: 'b27',
-  password: 'b27',
-  database: 'dbSrinivas'
-});
-// connection.connect(function(err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-// });
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
+  });
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
@@ -148,27 +147,50 @@ app.get('/api/syllabus/:pk', (request, response) => {
 });
 
 app.delete('/api/syllabus/:pk', (request, response) => {
-    const token = request.headers.authorization;
-    const userId = getUserId(response, token, (userId) => {
-        const id = request.params.pk;
-        let sqlQuery = `select itemId from items where itemId = ? and userId = ? and status = 1`;
-        connection.query(mysql.format(sqlQuery, [id, userId[0].userId]), (error, result, fields) => {
-            if(error) throw error;
-            if(result.length > 0) {
-                let deleteQuery = `update items set status = 0 where itemId = ?`;
-                connection.query(mysql.format(deleteQuery, [id]), (error, result) => {
-                    if(error) throw error;
-                    response.status(200).send({"Message":"Syllabus data successfully deleted!"});
-                });
-            }
-            else {
-                response.status(401);
-                response.send({"Error":"Please enter correct ID!"});
-            }
-        });
+    const userId = request.userId;
+    const id = request.params.pk;
+    const searchQuery = `select itemId from items where itemId = ? and userId = ? and status = 1`;
+    connection.query(mysql.format(searchQuery, [id, userId]), (error, result, fields) => {
+        if(error) throw error;
+        if(result.length == 0) {
+            response.status(401);
+            response.send({"Error":"Requested ID does not exist!"});
+            response.end();
+        }
+        if(result.length > 0) {
+            let deleteQuery = `update items set status = 0 where itemId = ?`;
+            connection.query(mysql.format(deleteQuery, [id]), (error, result) => {
+                if(error) throw error;
+                response.status(200).send({"Message":"Syllabus data successfully deleted!"});
+            });
+        }
     });
 });
-   
+
+
+app.put('api/syllabus/:pk', (request, response) => {
+    const userId = request.userId;
+    const id = request.params.pk;
+    const searchQuery = `select itemId from items where itemId = ? and userId = ? and status = 1`;
+    var title = request.body.title;
+    var description = request.body.description;
+    var id = request.params.pk;
+    connection.query(mysql.format(searchQuery, [id, userId[0].userId]), (error, result) => {
+        if(error) throw error;
+        if(result.length > 0) {
+            const sqlQuery = `update items set title = ?, description = ? where itemId = ?`;
+            const values = [title, description, id];
+            connection.query(mysql.format(sqlQuery, values), (error, result) => {
+                if(error) throw error;
+                response.status(200);
+                response.send({"Message":"Syllabus data successfully updated!"});
+            });
+        }
+        else {
+        response.status(401).send({"Error": "Please enter correct ID!"});
+        }
+    });
+});
 
 app.put('/api/syllabus/:pk', (request, response) => {
     const token = request.headers.authorization;
